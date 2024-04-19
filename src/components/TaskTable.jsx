@@ -5,9 +5,10 @@ import {
     useReactTable,
 } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
+import EditableCell from "./EditableCell";
 
 const TaskTable = () => {
-    const [todos, setTodos] = useState([]);
+    const [todos, setTodos] = useState(null);
     const [loading, setLoading] = useState(true);
 
     async function getTodos() {
@@ -15,7 +16,6 @@ const TaskTable = () => {
             "https://658580bf022766bcb8c8c53a.mockapi.io/practic-api/todo"
         );
         const data = await response.json();
-        console.log(data)
         setTodos(data);
         setLoading(false);
     }
@@ -28,12 +28,15 @@ const TaskTable = () => {
         {
             accessorKey: "task",
             header: "Task",
-            cell: (props) => <p>{props.getValue()}</p>,
+            size: 225,
+            cell: EditableCell,
         },
         {
             accessorKey: "date",
-            header: "Date",
-            cell: (props) => <p>{props.getValue()?.toLocaleTimeString()}</p>,
+            header: "Time",
+            cell: (props) => (
+                <p>{new Date(props.getValue()).toLocaleTimeString()}</p>
+            ),
         },
         {
             accessorKey: "notes",
@@ -48,27 +51,51 @@ const TaskTable = () => {
     ];
 
     const table = useReactTable({
-        todos,
+        data: todos,
         columns,
         getCoreRowModel: getCoreRowModel(),
+        columnResizeMode: "onChange",
+        meta: {
+            updateData: (rowIndex, columnId, value) =>
+                setTodos((prev) =>
+                    prev.map((row, index) => (index === rowIndex ? {
+                        ...prev[rowIndex], 
+                        [columnId]: value, 
+                    } : row))
+                ),
+        },
     });
+    console.log(todos);
 
     if (loading) {
         return <Spinner size="xl" />;
     }
     return (
         <Box>
-            <Box className="table">
+            <Box className="table" w={table.getTotalSize()}>
                 {table.getHeaderGroups().map((headerGroup) => (
                     <Box className="tr" key={headerGroup.id}>
                         {headerGroup.headers.map((header) => (
-                            <Box className="th" key={header.id}>
+                            <Box
+                                w={header.getSize()}
+                                className="th"
+                                key={header.id}
+                            >
                                 {header.column.columnDef.header}
+                                <Box
+                                    onMouseDown={header.getResizeHandler()}
+                                    onTouchStart={header.getResizeHandler()}
+                                    className={`resizer ${
+                                        header.column.getIsResizing() &&
+                                        "isResizing"
+                                    }`}
+                                />
                             </Box>
                         ))}
                     </Box>
                 ))}
-                {table.getRowModel().rows &&
+
+                {table.getRowModel() &&
                     table.getRowModel().rows.map((row) => (
                         <Box className="tr" key={row.id}>
                             {row.getVisibleCells().map((cell) => (
