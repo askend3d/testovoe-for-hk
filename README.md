@@ -1,8 +1,39 @@
-# React + Vite
+# Todo Table
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Простое веб-приложение для управления списком задач.
 
-Currently, two official plugins are available:
+## Описание
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Todo Table - это веб-приложение, разработанное для удобного управления задачами. Пользователи могут добавлять новые задачи, редактировать существующие и удалять их. Приложение позволяет также отслеживать даты выполнения задач и прикреплять к ним заметки.
+
+## Установка
+
+1. Клонируйте репозиторий на свой локальный компьютер:
+
+   ```bash
+   git clone https://github.com/askend3d/testovoe-for-hk
+
+2. Перейдите в директорию проекта:
+    ```bash
+    cd todo-table
+
+3. Установите зависимости:
+    ```bash
+    npm install
+
+## Использование
+
+1. Запустите приложение:
+    ```bash
+    npm run dev
+
+2. Откройте браузер и перейдите по адресу http://localhost:5173, чтобы открыть Todo Table.
+
+3. Добавьте новые задачи, редактируйте существующие и удаляйте их по мере необходимости.
+
+# Технологии:
+- Vite - быстрый сборщик с поддержкой горячей перезагрузки для современных веб-приложений.
+- React.js - JavaScript библиотека для создания пользовательских интерфейсов.
+- Chakra UI - библиотека компонентов для React с использованием стилизации в стиле CSS-in-JS.
+- react-table - библиотека для создания гибких и производительных таблиц в React.
+- react-datepicker - компонент выбора даты и времени для React.
