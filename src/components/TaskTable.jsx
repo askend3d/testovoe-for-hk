@@ -1,4 +1,4 @@
-import { Box, Spinner } from "@chakra-ui/react";
+import { Box, Spinner, Button, Center } from "@chakra-ui/react";
 import {
     flexRender,
     getCoreRowModel,
@@ -6,10 +6,16 @@ import {
 } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
 import EditableCell from "./EditableCell";
+import DateCell from "./DateCell";
+
 
 const TaskTable = () => {
     const [todos, setTodos] = useState(null);
     const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        getTodos();
+    }, []);
 
     async function getTodos() {
         const response = await fetch(
@@ -20,9 +26,28 @@ const TaskTable = () => {
         setLoading(false);
     }
 
-    useEffect(() => {
+    const addNote = async () => {
+        const response = await fetch(
+            "https://658580bf022766bcb8c8c53a.mockapi.io/practic-api/todo",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            }
+        );
         getTodos();
-    }, []);
+    };
+
+    const deleteNote = async (id) => {
+        await fetch(
+            `https://658580bf022766bcb8c8c53a.mockapi.io/practic-api/todo/${id}`,
+            {
+                method: "DELETE",
+            }
+        );
+        getTodos();
+    };
 
     const columns = [
         {
@@ -34,19 +59,33 @@ const TaskTable = () => {
         {
             accessorKey: "date",
             header: "Time",
-            cell: (props) => (
-                <p>{new Date(props.getValue()).toLocaleTimeString()}</p>
-            ),
+            cell: DateCell,
         },
         {
             accessorKey: "notes",
             header: "note",
-            cell: (props) => <p>{props.getValue()}</p>,
+            cell: EditableCell,
         },
         {
             accessorKey: "emoji",
             header: "Emoji",
             cell: (props) => <p>{props.getValue()}</p>,
+        },
+        {
+            header: "Actions",
+            cell: (props) => (
+                <Button
+                    className="button-delete"
+                    onClick={() => deleteNote(props.row.original.id)}
+                    colorScheme="red"
+                    variant="outline"
+                    size="sm"
+                    fontWeight="normal"
+                    _hover={{ bg: "red.500", color: "white" }}
+                >
+                    Delete
+                </Button>
+            ),
         },
     ];
 
@@ -58,20 +97,24 @@ const TaskTable = () => {
         meta: {
             updateData: (rowIndex, columnId, value) =>
                 setTodos((prev) =>
-                    prev.map((row, index) => (index === rowIndex ? {
-                        ...prev[rowIndex], 
-                        [columnId]: value, 
-                    } : row))
+                    prev.map((row, index) =>
+                        index === rowIndex
+                            ? { ...prev[rowIndex], [columnId]: value }
+                            : row
+                    )
                 ),
         },
     });
-    console.log(todos);
 
     if (loading) {
         return <Spinner size="xl" />;
     }
+
     return (
         <Box>
+            <Button onClick={addNote} mb="4">
+                Add Note
+            </Button>
             <Box className="table" w={table.getTotalSize()}>
                 {table.getHeaderGroups().map((headerGroup) => (
                     <Box className="tr" key={headerGroup.id}>
@@ -116,4 +159,5 @@ const TaskTable = () => {
         </Box>
     );
 };
+
 export default TaskTable;

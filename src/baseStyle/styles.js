@@ -3,12 +3,14 @@ const styles = {
       "html, body": {
         backgroundColor: "gray.900",
         color: "whiteAlpha.800",
+
       },
       svg: {
         cursor: "pointer",
       },
       ".table": {
         border: "1px solid #424242",
+        textAlign: "center",
       },
       ".tr": {
         display: "flex",

@@ -2,22 +2,22 @@ import { Input } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 
 function EditableCell({ getValue, row, column, table }) {
-    const initialValue = getValue(); 
+    const initialValue = getValue();
     const [value, setValue] = useState(initialValue);
 
     const onBlur = async () => {
-            const response = await fetch(
-                `https://658580bf022766bcb8c8c53a.mockapi.io/practic-api/todo/${row.original.id}`,
-                {
-                    method: "PUT", 
-                    headers: {
-                        "Content-Type": "application/json", 
-                    },
-                    body: JSON.stringify({ [column.id]: value }), 
-                }
-            );
-            table.options.meta.updateData(row.index, column.id, value);
-        } 
+        await fetch(
+            `https://658580bf022766bcb8c8c53a.mockapi.io/practic-api/todo/${row.original.id}`,
+            {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ [column.id]: value }),
+            }
+        );
+        table.options.meta.updateData(row.index, column.id, value);
+    };
 
     useEffect(() => {
         setValue(initialValue);
